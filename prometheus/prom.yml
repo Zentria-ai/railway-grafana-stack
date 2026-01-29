@@ -11,7 +11,6 @@ scrape_configs:
     static_configs:
       - targets: ['external-api-production-3af3.up.railway.app']
 
-
   #  ? TODO: add your services here
   # - job_name: 'your-job-name'
   #   scheme: https
