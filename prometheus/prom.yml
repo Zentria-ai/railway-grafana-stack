@@ -7,7 +7,7 @@ scrape_configs:
       - targets: ['localhost:9090']
 
   - job_name: 'external_api'
-    scheme: https
+    scheme: http
     static_configs:
       - targets: ['external-api-production-3af3.up.railway.app']
 
