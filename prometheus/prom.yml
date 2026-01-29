@@ -6,10 +6,10 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  # - job_name: 'example_api'
-  #   scheme: http
-  #   static_configs:
-  #     - targets: ['example_api:9091']
+  - job_name: 'external_api'
+    scheme: https
+    static_configs:
+      - targets: ['external-api-production-3af3.up.railway.app']
 
   #  ? TODO: add your services here
   # - job_name: 'your-job-name'
