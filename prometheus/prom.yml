@@ -19,7 +19,7 @@ scrape_configs:
   - job_name: 'analytics-api'
     scheme: http
     static_configs:
-      - targets: ['analytics-api.railway.internal:4022']
+      - targets: ['analytics-api-production-1326.up.railway.app']
   
   #  ? TODO: add your services here
   # - job_name: 'your-job-name'
