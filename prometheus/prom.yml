@@ -6,7 +6,7 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  - job_name: 'external_api'
+  - job_name: 'external-api'
     scheme: http
     static_configs:
       - targets: ['external-api-production-3af3.up.railway.app']
@@ -20,6 +20,21 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets: ['analytics-api-production-1326.up.railway.app']
+
+  - job_name: 'external-api-dev'
+    scheme: http
+    static_configs:
+      - targets: ['100.117.194.110:8000']
+
+  - job_name: 'n8n-dev'
+    scheme: http
+    static_configs:
+      - targets: ['100.117.194.110:5678']
+
+  - job_name: 'analytics-api-dev'
+    scheme: http
+    static_configs:
+      - targets: ['100.117.194.110:2222']
   
   #  ? TODO: add your services here
   # - job_name: 'your-job-name'
