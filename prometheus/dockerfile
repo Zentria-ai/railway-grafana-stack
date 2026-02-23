@@ -1,20 +1,25 @@
-FROM alpine:latest
-ARG VERSION=v3.2.1
+# Usa la imagen oficial de Prometheus (basada en Linux con permisos correctos)
+FROM prom/prometheus:v3.2.1
 
-RUN apk add --no-cache prometheus tailscale
+# Cambiamos temporalmente a root para instalar wget
+USER root
 
+# Descargamos los binarios de Tailscale precompilados de forma rápida
+RUN wget https://pkgs.tailscale.com/stable/tailscale_1.80.3_amd64.tgz && \
+    tar xzf tailscale_1.80.3_amd64.tgz --strip-components=1 -C /usr/bin/ tailscale_1.80.3_amd64/tailscaled tailscale_1.80.3_amd64/tailscale && \
+    rm tailscale_1.80.3_amd64.tgz && \
+    mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
+
+# Copiamos tu archivo de configuración
 COPY prom.yml /etc/prometheus/prom.yml
 
-# Preparamos el directorio de datos para evitar errores de permisos
-RUN mkdir -p /prometheus && chmod 777 /prometheus
-
-# Cambiamos la estrategia del script
+# Creamos el script de arranque usando la sintaxis oficial básica
 RUN echo '#!/bin/sh' > /start.sh && \
-    echo 'tailscaled --tun=userspace-networking --socks5-server=localhost:1055 & \
-          (sleep 3 && if [ -n "$TS_AUTHKEY" ]; then tailscale up --authkey=$TS_AUTHKEY; fi) & \
-          exec prometheus --config.file=/etc/prometheus/prom.yml --storage.tsdb.path=/prometheus --web.enable-lifecycle' > /start.sh && \
+    echo '/usr/bin/tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --state=/var/lib/tailscale/tailscaled.state > /dev/null 2>&1 & \
+          sleep 2 && \
+          if [ -n "$TS_AUTHKEY" ]; then /usr/bin/tailscale up --authkey=$TS_AUTHKEY; fi && \
+          exec /bin/prometheus --config.file=/etc/prometheus/prom.yml --storage.tsdb.path=/prometheus --web.enable-lifecycle' > /start.sh && \
     chmod +x /start.sh
 
-EXPOSE 9090
-
+# Punto de entrada
 ENTRYPOINT ["/start.sh"]
