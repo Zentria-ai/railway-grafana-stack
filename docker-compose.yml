@@ -6,6 +6,8 @@ services:
     build:
       context: .
     user: root
+    ports:
+      - "${PORT:-1055}:${PORT:-1055}"
     environment:
       - PORT=${PORT}
       - TS_AUTHKEY=${TS_AUTHKEY}
