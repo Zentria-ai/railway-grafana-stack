@@ -1,19 +1,33 @@
-# Usa la imagen oficial de Prometheus (basada en Linux con permisos correctos)
+# --- ETAPA 1: Descargador ---
+# Usamos alpine temporalmente solo para bajar Tailscale de forma segura
+FROM alpine:latest AS downloader
+
+RUN apk add --no-cache wget tar
+
+RUN wget https://pkgs.tailscale.com/stable/tailscale_1.80.3_amd64.tgz && \
+    tar xzf tailscale_1.80.3_amd64.tgz && \
+    mkdir -p /tailscale-bin && \
+    cp tailscale_1.80.3_amd64/tailscaled /tailscale-bin/ && \
+    cp tailscale_1.80.3_amd64/tailscale /tailscale-bin/
+
+
+# --- ETAPA 2: Imagen Final ---
+# Volvemos a la imagen pura de Prometheus
 FROM prom/prometheus:v3.2.1
 
-# Cambiamos temporalmente a root para instalar wget
 USER root
 
-# Descargamos los binarios de Tailscale precompilados de forma rápida
-RUN wget https://pkgs.tailscale.com/stable/tailscale_1.80.3_amd64.tgz && \
-    tar xzf tailscale_1.80.3_amd64.tgz --strip-components=1 -C /usr/bin/ tailscale_1.80.3_amd64/tailscaled tailscale_1.80.3_amd64/tailscale && \
-    rm tailscale_1.80.3_amd64.tgz && \
-    mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
+# Copiamos los binarios que ya descargamos en la etapa anterior
+COPY --from=downloader /tailscale-bin/tailscaled /usr/bin/tailscaled
+COPY --from=downloader /tailscale-bin/tailscale /usr/bin/tailscale
 
-# Copiamos tu archivo de configuración
+# Preparamos las carpetas que necesita Tailscale
+RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
+
+# Copiamos tu archivo de configuración de métricas
 COPY prom.yml /etc/prometheus/prom.yml
 
-# Creamos el script de arranque usando la sintaxis oficial básica
+# Script de arranque
 RUN echo '#!/bin/sh' > /start.sh && \
     echo '/usr/bin/tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --state=/var/lib/tailscale/tailscaled.state > /dev/null 2>&1 & \
           sleep 2 && \
