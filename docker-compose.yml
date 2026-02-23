@@ -7,7 +7,7 @@ services:
       context: .
     user: root
     environment:
-      - PORT=1055
+      - PORT=${PORT}
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=true
