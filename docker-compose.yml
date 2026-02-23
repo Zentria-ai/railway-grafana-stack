@@ -3,7 +3,9 @@ version: '3.8'
 services:
 
   tailscale:
-    image: tailscale/tailscale:latest
+    build:
+      context: .
+      dockerfile: dockerfile
     user: root
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
