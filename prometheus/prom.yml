@@ -1,60 +1,66 @@
 global:
-  scrape_interval: 10s # Intervalo de captura de métricas
-  evaluation_interval: 10s # Intervalo para evaluar reglas de alerta
+  scrape_interval: 10s
+  evaluation_interval: 10s
 
 scrape_configs:
+
   # --- PROMETHEUS (Auto-monitoreo) ---
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
 
-  # --- EXTERNAL API ---
-  - job_name: 'external-api'
+  # --- EXTERNAL API — PRODUCCIÓN ---
+  - job_name: 'external-api-prod'
     scheme: http
+    # opcional: proxy si tu red lo requiere
+    # proxy_url: http://127.0.0.1:1055
     static_configs:
-      - targets: ['external-api-production-3af3.up.railway.app']
+      - targets: ['external-api-production-3af3.up.railway.app:80']
         labels:
           env: 'production'
+
+  # --- EXTERNAL API — DESARROLLO (TAILSCALE) ---
+  - job_name: 'external-api-dev'
+    scheme: http
+    proxy_url: http://127.0.0.1:1055
+    static_configs:
       - targets: ['100.117.194.110:8000']
         labels:
           env: 'development'
-    relabel_configs:
-      - source_labels: [env]
-        regex: '^development$'
-        target_label: __proxy_url__
-        replacement: 'http://127.0.0.1:1055'
 
-  # --- N8N ---
-  - job_name: 'n8n'
+  # --- N8N — PRODUCCIÓN ---
+  - job_name: 'n8n-prod'
     scheme: http
     static_configs:
-      - targets: ['primary-production-cfef6.up.railway.app']
+      - targets: ['primary-production-cfef6.up.railway.app:80']
         labels:
           env: 'production'
+
+  # --- N8N — DESARROLLO (TAILSCALE) ---
+  - job_name: 'n8n-dev'
+    scheme: http
+    proxy_url: http://127.0.0.1:1055
+    static_configs:
       - targets: ['100.117.194.110:5678']
         labels:
           env: 'development'
-    relabel_configs:
-      - source_labels: [env]
-        regex: '^development$'
-        target_label: __proxy_url__
-        replacement: 'http://127.0.0.1:1055'
 
-  # --- ANALYTICS API ---
-  - job_name: 'analytics-api'
+  # --- ANALYTICS API — PRODUCCIÓN ---
+  - job_name: 'analytics-api-prod'
     scheme: http
     static_configs:
-      - targets: ['analytics-api-production-1326.up.railway.app']
+      - targets: ['analytics-api-production-1326.up.railway.app:80']
         labels:
           env: 'production'
+
+  # --- ANALYTICS API — DESARROLLO (TAILSCALE) ---
+  - job_name: 'analytics-api-dev'
+    scheme: http
+    proxy_url: http://127.0.0.1:1055
+    static_configs:
       - targets: ['100.117.194.110:2222']
         labels:
           env: 'development'
-    relabel_configs:
-      - source_labels: [env]
-        regex: '^development$'
-        target_label: __proxy_url__
-        replacement: 'http://127.0.0.1:1055'
   
   #  ? TODO: add your services here
   # - job_name: 'your-job-name'
