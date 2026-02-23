@@ -22,17 +22,14 @@ scrape_configs:
       - targets: ['analytics-api-production-1326.up.railway.app']
 
   - job_name: 'external-api-dev'
-    scheme: http
     static_configs:
       - targets: ['100.117.194.110:8000']
 
   - job_name: 'n8n-dev'
-    scheme: http
     static_configs:
       - targets: ['100.117.194.110:5678']
 
   - job_name: 'analytics-api-dev'
-    scheme: http
     static_configs:
       - targets: ['100.117.194.110:2222']
   
