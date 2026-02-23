@@ -5,7 +5,6 @@ services:
   tailscale:
     build:
       context: .
-      dockerfile: dockerfile
     user: root
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
