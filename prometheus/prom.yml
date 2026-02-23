@@ -18,6 +18,11 @@ scrape_configs:
       - targets: ['100.117.194.110:8000']
         labels:
           env: 'development'
+    relabel_configs:
+      - source_labels: [env]
+        regex: '^development$'
+        target_label: __proxy_url__
+        replacement: 'http://127.0.0.1:1055'
 
   # --- N8N ---
   - job_name: 'n8n'
@@ -29,6 +34,11 @@ scrape_configs:
       - targets: ['100.117.194.110:5678']
         labels:
           env: 'development'
+    relabel_configs:
+      - source_labels: [env]
+        regex: '^development$'
+        target_label: __proxy_url__
+        replacement: 'http://127.0.0.1:1055'
 
   # --- ANALYTICS API ---
   - job_name: 'analytics-api'
@@ -40,6 +50,11 @@ scrape_configs:
       - targets: ['100.117.194.110:2222']
         labels:
           env: 'development'
+    relabel_configs:
+      - source_labels: [env]
+        regex: '^development$'
+        target_label: __proxy_url__
+        replacement: 'http://127.0.0.1:1055'
   
   #  ? TODO: add your services here
   # - job_name: 'your-job-name'
