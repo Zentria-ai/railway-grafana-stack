@@ -1,39 +1,5 @@
-# --- ETAPA 1: Descargador ---
-# Usamos alpine temporalmente solo para bajar Tailscale de forma segura
-FROM alpine:latest AS downloader
-
-RUN apk add --no-cache wget tar
-
-RUN wget https://pkgs.tailscale.com/stable/tailscale_1.80.3_amd64.tgz && \
-    tar xzf tailscale_1.80.3_amd64.tgz && \
-    mkdir -p /tailscale-bin && \
-    cp tailscale_1.80.3_amd64/tailscaled /tailscale-bin/ && \
-    cp tailscale_1.80.3_amd64/tailscale /tailscale-bin/
-
-
-# --- ETAPA 2: Imagen Final ---
-# Volvemos a la imagen pura de Prometheus
-FROM prom/prometheus:v3.2.1
-
-USER root
-
-# Copiamos los binarios que ya descargamos en la etapa anterior
-COPY --from=downloader /tailscale-bin/tailscaled /usr/bin/tailscaled
-COPY --from=downloader /tailscale-bin/tailscale /usr/bin/tailscale
-
-# Preparamos las carpetas que necesita Tailscale
-RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
-
-# Copiamos tu archivo de configuración de métricas
+# prometheus/dockerfile
+ARG VERSION=v3.2.1
+FROM prom/prometheus:${VERSION}
 COPY prom.yml /etc/prometheus/prom.yml
-
-# Script de arranque
-RUN echo '#!/bin/sh' > /start.sh && \
-    echo '/usr/bin/tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --state=/var/lib/tailscale/tailscaled.state > /dev/null 2>&1 & \
-          sleep 2 && \
-          if [ -n "$TS_AUTHKEY" ]; then /usr/bin/tailscale up --authkey=$TS_AUTHKEY; fi && \
-          exec /bin/prometheus --config.file=/etc/prometheus/prom.yml --storage.tsdb.path=/prometheus --web.enable-lifecycle' > /start.sh && \
-    chmod +x /start.sh
-
-# Punto de entrada
-ENTRYPOINT ["/start.sh"]
+CMD ["--config.file=/etc/prometheus/prom.yml", "--storage.tsdb.path=/prometheus"]
