@@ -14,6 +14,8 @@ services:
     volumes:
       - tailscale_data:/var/lib/tailscale
     restart: unless-stopped
+    ports:
+      - "1055:1055"
     
 volumes: 
   tailscale_data:
