@@ -1,22 +1,20 @@
 FROM alpine:latest
 ARG VERSION=v3.2.1
 
-# 1. Instalamos Prometheus y Tailscale
 RUN apk add --no-cache prometheus tailscale
 
-# 2. Copiamos tu archivo de configuración original (prom.yml)
 COPY prom.yml /etc/prometheus/prom.yml
 
-# 3. Creamos el script de arranque dual
+# Preparamos el directorio de datos para evitar errores de permisos
+RUN mkdir -p /prometheus && chmod 777 /prometheus
+
+# Cambiamos la estrategia del script
 RUN echo '#!/bin/sh' > /start.sh && \
     echo 'tailscaled --tun=userspace-networking --socks5-server=localhost:1055 & \
-          sleep 3 && \
-          if [ -n "$TS_AUTHKEY" ]; then tailscale up --authkey=$TS_AUTHKEY; fi && \
-          exec prometheus --config.file=/etc/prometheus/prom.yml --storage.tsdb.path=/prometheus' > /start.sh && \
+          (sleep 3 && if [ -n "$TS_AUTHKEY" ]; then tailscale up --authkey=$TS_AUTHKEY; fi) & \
+          exec prometheus --config.file=/etc/prometheus/prom.yml --storage.tsdb.path=/prometheus --web.enable-lifecycle' > /start.sh && \
     chmod +x /start.sh
 
-# 4. Exponemos el puerto estándar
 EXPOSE 9090
 
-# 5. Punto de entrada
 ENTRYPOINT ["/start.sh"]
