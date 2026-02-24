@@ -17,7 +17,7 @@ scrape_configs:
     static_configs:
       - targets: ['external-api-production-3af3.up.railway.app:80']
         labels:
-          env: 'production'
+          env: 'prod'
 
   # --- EXTERNAL API — DESARROLLO (TAILSCALE) ---
   - job_name: 'external-api-dev'
@@ -26,7 +26,7 @@ scrape_configs:
     static_configs:
       - targets: ['100.117.194.110:8000']
         labels:
-          env: 'development'
+          env: 'dev'
 
   # --- N8N — PRODUCCIÓN ---
   - job_name: 'n8n-prod'
@@ -34,7 +34,7 @@ scrape_configs:
     static_configs:
       - targets: ['primary-production-cfef6.up.railway.app:80']
         labels:
-          env: 'production'
+          env: 'prod'
 
   # --- N8N — DESARROLLO (TAILSCALE) ---
   - job_name: 'n8n-dev'
@@ -43,7 +43,7 @@ scrape_configs:
     static_configs:
       - targets: ['100.117.194.110:5678']
         labels:
-          env: 'development'
+          env: 'dev'
 
   # --- ANALYTICS API — PRODUCCIÓN ---
   - job_name: 'analytics-api-prod'
@@ -51,7 +51,7 @@ scrape_configs:
     static_configs:
       - targets: ['analytics-api-production-1326.up.railway.app:80']
         labels:
-          env: 'production'
+          env: 'prod'
 
   # --- ANALYTICS API — DESARROLLO (TAILSCALE) ---
   - job_name: 'analytics-api-dev'
@@ -60,7 +60,7 @@ scrape_configs:
     static_configs:
       - targets: ['100.117.194.110:2222']
         labels:
-          env: 'development'
+          env: 'dev'
   
   #  ? TODO: add your services here
   # - job_name: 'your-job-name'
