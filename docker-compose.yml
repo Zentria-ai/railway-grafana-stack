@@ -13,7 +13,7 @@ services:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=true
-      - TS_SOCKS5_SERVER=0.0.0.0:${PORT}
+      - TS_OUTBOUND_HTTP_PROXY_LISTEN=0.0.0.0:${PORT:-1055}
 
       - TS_EPHEMERAL=true
       - TS_HOSTNAME=railway-proxy
