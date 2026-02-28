@@ -1,4 +1,4 @@
 FROM tailscale/tailscale:latest
 
 # Le indicamos a Railway que registre este puerto en su red interna
-EXPOSE 1055
+EXPOSE 1056
