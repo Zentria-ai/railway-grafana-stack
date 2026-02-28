@@ -22,7 +22,7 @@ scrape_configs:
   # --- EXTERNAL API — DESARROLLO (TAILSCALE) ---
   - job_name: 'external-api-dev'
     scheme: http
-    proxy_url: http://tailscale-proxy.railway.internal:1055
+    proxy_url: socks5://tailscale-proxy.railway.internal:1055
     static_configs:
       - targets: ['100.117.194.110:8000']
         labels:
@@ -39,7 +39,7 @@ scrape_configs:
   # --- N8N — DESARROLLO (TAILSCALE) ---
   - job_name: 'n8n-dev'
     scheme: http
-    proxy_url: http://tailscale-proxy.railway.internal:1055
+    proxy_url: socks5://tailscale-proxy.railway.internal:1055
     static_configs:
       - targets: ['100.117.194.110:5678']
         labels:
@@ -56,7 +56,7 @@ scrape_configs:
   # --- ANALYTICS API — DESARROLLO (TAILSCALE) ---
   - job_name: 'analytics-api-dev'
     scheme: http
-    proxy_url: http://tailscale-proxy.railway.internal:1055
+    proxy_url: socks5://tailscale-proxy.railway.internal:1055
     static_configs:
       - targets: ['100.117.194.110:2222']
         labels:
