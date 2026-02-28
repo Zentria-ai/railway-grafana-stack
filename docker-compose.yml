@@ -13,9 +13,10 @@ services:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=true
-      - TS_OUTBOUND_HTTP_PROXY_LISTEN=0.0.0.0:1056
+
       - TS_EPHEMERAL=true
       - TS_HOSTNAME=railway-proxy
+    command: tailscaled --tun=userspace-networking --outbound-http-proxy-listen=0.0.0.0:1056
     volumes:
       - tailscale_data:/var/lib/tailscale
     restart: unless-stopped
