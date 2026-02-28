@@ -7,13 +7,13 @@ services:
       context: .
     user: root
     ports:
-      - "${PORT:-1055}:${PORT:-1055}"
+      - "1055:1055"
     environment:
       - PORT=${PORT}
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=true
-      - TS_SOCKS5_SERVER=0.0.0.0:${PORT}
+      - TS_SOCKS5_SERVER=0.0.0.0:1055
 
       - TS_EPHEMERAL=true
       - TS_HOSTNAME=railway-proxy
